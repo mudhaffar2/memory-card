@@ -3,6 +3,7 @@
 
 var cardBoard = document.querySelector('#cardBoard');
 var matches = document.querySelector('#matches');
+var timer = document.querySelector('#timer');
 var clickCounter = 0;
 var matchCounter = 0;
 var renderedPics;
@@ -29,13 +30,25 @@ var imgArray = [
 var foundArray = [];
 var cardsArray = createBoard(4,5);
 randomPics(cardsArray);
-cardsArray.forEach(function(cardRow) {
-  cardRow.forEach(function(card) {
-    card.addEventListener('click', divClicked); 
-  });
-});
+addClickEvent();
 
 //////////////// functions
+
+function addClickEvent() {
+  cardsArray.forEach(function(cardRow) {
+    cardRow.forEach(function(card) {
+      card.addEventListener('click', divClicked); 
+    });
+  });
+}
+
+function removeClickEvent() {
+  cardsArray.forEach(function(cardRow) {
+    cardRow.forEach(function(card) {
+      card.removeEventListener('click', divClicked); 
+    });
+  });
+}
 
 function createBoard (rows,cols) {
   var boardArray = [];
@@ -121,6 +134,8 @@ function divClicked() {
           foundArray.push(firstCard.src);
           if (foundArray.length == renderedPics) {
             winMessage = ' You win!!!';
+            clearInterval(gameTime);
+            removeClickEvent();
           }
           matches.childNodes[1].textContent = matchCounter + winMessage;
         } else {
@@ -134,7 +149,21 @@ function divClicked() {
   
 }
 
+var time = 61;
 
+var gameTime = setInterval(function() {
+  time--;
+  var timeMsg;
+  if (time<0) {
+    clearInterval(gameTime);
+    timeMsg = 'Time is up.. you lost!!!';
+    removeClickEvent();
+  } else {
+    var zero = (time<10) ? '0' : '';
+    timeMsg = zero + time + ' seconds remaining..';
+  }
+  timer.childNodes[1].textContent = timeMsg;
+},1000);
 
 
 
